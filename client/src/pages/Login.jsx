@@ -3,7 +3,7 @@ import { assets } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 const Login = () => {
 
@@ -32,10 +32,11 @@ const Login = () => {
                 if(data.success){
                     setIsLoggedin(true);
                     getUserData();
+                    toast.success(data.message || "Signup Successfully")
                     navigate('/');
                 }else{
-                    toast.error(data.message);
-                    // alert(data.message);
+                    toast.error(data.message || "Error in signup");
+                    toast.success(data.message)
                 }
             }else{
                 const {data} = await axios.post(backendUrl + '/api/auth/login', {
@@ -47,12 +48,13 @@ const Login = () => {
                     setIsLoggedin(true);
                     getUserData();
                     navigate('/');
+                    toast.success(data.message || "Login Successfully")
                 }else{
-                    toast.error(data.message);
+                    toast.error(data.message || "Error in Login");
                 }
             }
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message || "Error in Login");
         }
     }
 

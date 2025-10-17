@@ -3,7 +3,7 @@ import { assets } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 const Navbar = () => {
 
@@ -17,7 +17,7 @@ const Navbar = () => {
 
             if(data.success){
                 navigate('/email-verify');
-                toast.success(data.message)
+                toast.success(data.message || "Looged out!")
             }
             else{
                 toast.error(data.message)
@@ -34,6 +34,7 @@ const Navbar = () => {
             console.log("Data is ",data)
             data.success && setIsLoggedin(false)
             data.success && setUserData(false)
+            toast.success(data.message)
             // if (data.success) {
             //     setIsLoggedin(false);
             //     setUserData(false);

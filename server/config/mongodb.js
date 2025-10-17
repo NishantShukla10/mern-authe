@@ -1,9 +1,16 @@
 import mongoose from "mongoose";
 
-const connectDB = async () => {
-    mongoose.connection.on('connected', ()=> console.log("Database Connected"));
+const URL = process.env.MONGODB_URL;
 
-    await mongoose.connect(`${process.env.MONGODB_URL}/mern-auth`)
+const connectDB = async () => {
+    try {
+        const res = await mongoose.connect(URL);
+        if(res){
+            console.log('MongoDB Connected!')
+        }
+    } catch (error) {
+        console.log('MongoDB Connection error', error)
+    }
 };
 
 export default connectDB;
