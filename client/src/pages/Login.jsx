@@ -32,7 +32,7 @@ const Login = () => {
                 if(data.success){
                     setIsLoggedin(true);
                     getUserData();
-                    toast.success(data.message || "Signup Successfully")
+                    toast.success(data.message)
                     navigate('/');
                 }else{
                     toast.error(data.message || "Error in signup");
@@ -46,14 +46,18 @@ const Login = () => {
 
                 if(data.success){
                     setIsLoggedin(true);
+                    console.log("1");
                     getUserData();
+                    console.log("2");
                     navigate('/');
-                    toast.success(data.message || "Login Successfully")
+                    toast.success(data.message)
                 }else{
+                    console.log("Error in else of login!")
                     toast.error(data.message || "Error in Login");
                 }
             }
         } catch (error) {
+            console.log("Error in catch of login!")
             toast.error(error.message || "Error in Login");
         }
     }
