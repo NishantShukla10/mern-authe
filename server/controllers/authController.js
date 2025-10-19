@@ -124,15 +124,25 @@ export const sendVerifyOtp = async (req, res)=> {
         user.verifyOtpExpireAt = Date.now() + 24*60*60*1000 // 1day in milliseconds
         await user.save();
 
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Account Verification OTP',
-            // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-            html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email)
-        }
+        // const mailOptions = {
+        //     from: process.env.SENDER_EMAIL,
+        //     to: user.email,
+        //     subject: 'Account Verification OTP',
+        //     // text: `Your OTP is ${otp}. Verify your account using this OTP.`,
+        //     html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email)
+        // }
         await transporter.sendMail(mailOptions);
-        return res.json({success: true, message: 'Verification OTP Sent on Email'});
+
+        const to= user.email;
+        const subject = 'Account Verification OTP';
+        const text = `Your OTP is ${otp}. Verify your account using this OTP.`;
+        const html = EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email);
+        await sendMail(to, subject, text, html);
+
+        return res.json({
+            success: true, 
+            message: 'Verification OTP Sent on Email'
+        });
 
     } catch (error) {
         return res.json({success: false, message: error.message});
@@ -206,6 +216,13 @@ export const sendResetOtp = async (req, res)=> {
             html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email)
         }
         await transporter.sendMail(mailOptions);
+
+        const to= user.email;
+        const subject = 'Password Reset OTP';
+        const text = `Your OTP for resetting your password is ${otp}. Use this OTP to proceed with resetting your password.`;
+        const html = PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email);
+        await sendMail(to, subject, text, html);
+
         return res.json({success: true, message: 'OTP Sent to your email'});
 
 
@@ -217,7 +234,10 @@ export const sendResetOtp = async (req, res)=> {
 export const resetPassword = async (req, res)=>{
     const {email, otp, newPassword} = req.body;
     if(!email || !otp || !newPassword){
-        return res.json({success: false, message: 'Email, OTP, and new passoword are required'});
+        return res.json({
+            success: false, 
+            message: 'Email, OTP, and new passoword are required'
+        });
     }
 
     try {
@@ -238,7 +258,10 @@ export const resetPassword = async (req, res)=>{
         user.resetOtpExpireAt = 0;
         await user.save();
 
-        return res.json({success: true, message: 'Password has been reset successfully'});
+        return res.json({
+            success: true, 
+            message: 'Password has been reset successfully'
+        });
         
     } catch (error) {
         return res.json({success: false, message: error.message});
